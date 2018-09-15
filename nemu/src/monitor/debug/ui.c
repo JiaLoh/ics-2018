@@ -38,6 +38,51 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+static int cmd_si(char *args){
+	char *arg=strtok(NULL," ");
+	int N;
+	if(arg==NULL) cpu_exec(1);
+	else{
+		sscanf(arg,"%d",&N);
+		cpu_exec(N);
+	}
+	return 0;
+}
+
+static int cmd_x(char *args){
+	char *arg = strtok(NULL," ");
+	uint32_t N1;
+	sscanf(arg,"%d",&N1);
+
+	char *argp=strtok(NULL," ");
+	uint32_t N2;
+	sscanf(argp,"0x%x",&N2);
+	uint32_t i;
+	i=0;
+	while(i<N1){
+		printf("%x\n",paddr_read(N2,4));
+		N2=N2+4;
+		i=i+1;
+	}
+	return 0;
+}
+
+static int cmd_info(char *args){
+	char *arg = strtok(NULL," ");
+	if (*arg =='r'){
+		printf("eax 0x%08x\n", cpu.eax);
+		printf("ebx 0x%08x\n", cpu.ebx);
+		printf("ecx 0x%08x\n", cpu.ecx);
+		printf("edx 0x%08x\n", cpu.edx);
+		printf("eip 0x%08x\n", cpu.eip);
+		printf("esp 0x%08x\n", cpu.esp);
+		printf("ebp 0x%08x\n", cpu.ebp);
+		printf("edi 0x%08x\n", cpu.edi);
+		printf("esi 0x%08x\n", cpu.esi);
+	}
+	return 0;
+}
+
 static struct {
   char *name;
   char *description;
@@ -46,6 +91,9 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  { "si","Single step",cmd_si},
+  { "info","Print the info of register",cmd_info},
+  { "x","scan the memory", cmd_x},
 
   /* TODO: Add more commands */
 
